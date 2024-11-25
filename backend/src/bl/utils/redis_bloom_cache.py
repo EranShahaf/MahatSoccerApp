@@ -13,7 +13,7 @@ redis_client = redis.Redis(
         db=0
     )
 
-def redis_bloom_cache(bloom_key, cache_key_prefix, expire_time=3600):
+def redis_bloom_cache(bloom_key, cache_key_prefix, expire_time=os.getenv('REDIS_EXPIRE_TIME', 3600)):
     """
     A decorator that implements a caching mechanism using Redis and a Bloom filter.
 

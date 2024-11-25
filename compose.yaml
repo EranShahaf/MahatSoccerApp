@@ -50,6 +50,7 @@ services:
       FOOTBALL_API_TOKEN: 09c05f78fa8a44f8a2343532c1945ee6
       REDIS_HOST: redis
       REDIS_PORT: 6379
+      REDIS_EXPIRE_TIME: 9800
       BLOOM_SIZE: 100
       BLOOM_ERROR_RATE: 0.01
       BLOOM_KEY: 'function_calls'

@@ -189,3 +189,4 @@ cython_debug/
 data
 redisinsight
 my-db
+mysqldata
