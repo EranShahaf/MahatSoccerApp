@@ -14,7 +14,7 @@ services:
       timeout: 5s
       retries: 5
     volumes:
-      - ./my-db:/var/lib/mysql
+      - ./mysqldata:/var/lib/mysql
 
   redis:
     image: redislabs/rebloom:2.8.1
