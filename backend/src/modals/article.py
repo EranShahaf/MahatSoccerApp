@@ -1,6 +1,6 @@
 from typing import List
 from sqlmodel import Field, SQLModel, Relationship
-from sqlalchemy import Column, Integer, String
+from sqlalchemy import Column, Integer, LargeBinary 
 
 # Article model
 class Article(SQLModel, table=True):
