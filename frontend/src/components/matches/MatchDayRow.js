@@ -31,7 +31,7 @@ export default function Row({ row }) {
           </IconButton>
         </TableCell>
         <TableCell>
-          <Avatar alt="Remy Sharp" src={row.competition.emblem} onClick={() => navigate(`/competetion/${row.competition.code}`)} />
+          <Avatar alt="Remy Sharp" src={row.competition.emblem} onClick={() => navigate(`/competetions/${row.competition.code}`)} />
         </TableCell>
         <TableCell>
           <TeamResult
@@ -54,12 +54,6 @@ export default function Row({ row }) {
           <Collapse in={open} timeout="auto" unmountOnExit>
             <Box sx={{ margin: 1 }}>
               <Typography variant="h6" gutterBottom component="div">
-                <Link
-                  href="https://www.haaretz.co.il/misc/2009-04-24/ty-article/0000017f-ec81-d0f7-a9ff-eec54db20000"
-                  underline="none"
-                >
-                  Maccabi Zona
-                </Link>
               </Typography>
               <Table size="small" aria-label="purchases">
                 <TableHead>

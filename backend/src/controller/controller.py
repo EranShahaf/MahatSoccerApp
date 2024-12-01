@@ -50,7 +50,22 @@ app.add_middleware(
 class ExceptionHandlerMiddleware(BaseHTTPMiddleware):
     async def dispatch(self, request: Request, call_next):
         try:
-            logger.info(f"Received request: {request.method} {request.url}")
+            # Get request body
+            body = await request.body()
+            body_str = body.decode() if body else ""
+            
+            # Log detailed request information
+            logger.info(
+                f"""Request:
+                Method: {request.method}
+                URL: {request.url}
+                Headers: {dict(request.headers)}
+                Body: {body_str}"""
+            )
+            
+            # Create a new request with the same body since we consumed it
+            request._body = body
+            
             response = await call_next(request)
             return response
         except Exception as e:

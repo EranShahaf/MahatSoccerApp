@@ -20,7 +20,7 @@ export default function CompetitionCard({ competition }) {
 
   return (
     <Card sx={{ maxWidth: 245, padding: "16px", border: "1px solid black" }}>
-      <ButtonBase onClick={() => navigate(`/competetion/${competition.code}`)}>
+      <ButtonBase onClick={() => navigate(`/competetions/${competition.code}`)}>
         <CardActionArea>
           <CardMedia
             className={classes.media}

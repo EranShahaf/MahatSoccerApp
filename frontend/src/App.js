@@ -7,6 +7,8 @@ import { Navbar } from "./components/Navbar";
 import { TeamPage } from "./pages/TeamPage";
 import LoginForm from "./components/Login/LoginForm";
 import SignupForm from "./components/Login/SignUp";
+import HomePage from "./pages/HomePage";
+import Newsletter from "./pages/Newsletter";
 
 function App() {
   return (
@@ -14,50 +16,17 @@ function App() {
       <Navbar />
       <div className="App">
         <Routes>
-          <Route
-            exact
-            path="/competetion/:code"
-            element={
-              <React.Fragment>
-                <SingleCompetitionPage />
-              </React.Fragment>
-            }
-          />
-          <Route
-            path="/signup"
-            element={
-              <React.Fragment>
-                <SignupForm />
-              </React.Fragment>
-            }
-          />
-          <Route
-            path="/login"
-            element={
-              <React.Fragment>
-                <LoginForm />
-              </React.Fragment>
-            }
-          />
-          <Route
-            path="/"
-            element={
-              <React.Fragment>
-                <CompetitionsCards />
-              </React.Fragment>
-            }
-          />
-          <Route
-            path="/team/:teamId"
-            element={
-              <React.Fragment>
-                <TeamPage />
-              </React.Fragment>
-            }
-          />
+          <Route path="/" element={<HomePage />} />
+          <Route path="/newsletter" element={<Newsletter />} />
+          <Route path="/competetions/:code" element={<SingleCompetitionPage />} />
+          <Route path="/signup" element={<SignupForm />} />
+          <Route path="/login" element={<LoginForm />} />
+          <Route path="/competetions" element={<CompetitionsCards />} />
+          <Route path="/team/:teamId" element={<TeamPage />} />
         </Routes>
       </div>
     </Router>
   );
 }
+
 export default App;

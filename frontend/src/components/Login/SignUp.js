@@ -25,6 +25,7 @@ import {
   fetchStandings,
   selectAllStandings,
 } from "../../state/slices/standingsSlice";
+import { server } from "../../api/api";
 
 const SignupForm = () => {
   const dispatch = useDispatch();
@@ -85,16 +86,15 @@ const SignupForm = () => {
       username,
       full_name: fullName,
       password,
-      admin: false, // Set to false, you can change this if needed
-      favorite_team_id: selectedTeamId, // Send the selected team's ID
+      admin: false,
+      favorite_team_id: selectedTeamId,
     };
 
     try {
-      // Replace with actual API call to register the user
-      //   await dispatch(signupUser(userData));
-      // Redirect or handle successful registration (e.g., show success message)
+      const response = await server.post('users/', userData);
+      navigate('/login');
     } catch (err) {
-      setError("Error during signup");
+      setError(err.response?.data?.detail || "Error during signup");
       setLoading(false);
     }
   };

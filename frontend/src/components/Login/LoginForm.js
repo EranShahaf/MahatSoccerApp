@@ -1,7 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-// import { loginUser } from "./redux/userActions";
 import {
   TextField,
   Button,
@@ -11,74 +9,41 @@ import {
   Box,
   Grid,
   Paper,
-  Link,
-  MenuItem,
-  Select,
-  InputLabel,
-  FormControl,
+  Alert,
 } from "@mui/material";
-import {
-  fetchCompetitions,
-  selectAllCompetitions,
-} from "../../state/slices/competitionsSlice";
-import {
-  fetchStandings,
-  selectAllStandings,
-} from "../../state/slices/standingsSlice";
+import { server } from "../../api/api";
 
 const LoginForm = () => {
-  const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { loading, error } = useSelector((state) => state.user); // Redux state for loading and error
-
-  const [email, setEmail] = useState("");
+  
+  const [loading, setLoading] = useState(false);
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
 
-  const competitions = useSelector(selectAllCompetitions);
-  const competitionsStatus = useSelector((state) => {
-    return state?.competitions?.status;
-  });
-
-  const standings = useSelector(selectAllStandings);
-  const standingsStatus = useSelector((state) => {
-    return state?.standings?.status;
-  });
-
-  const teams = standings?.standings
-    ?.map(({ table }) => table.map(({ team }) => team))
-    .flat();
-
-  const [selectedCompetetionCode, setSelectedCompetetionCode] = useState(""); // Selected competition
-  const [selectedTeamId, setSelectedTeamId] = useState(""); // Selected team
-
-  useEffect(() => {
-    if (competitionsStatus === "idle") {
-      dispatch(fetchCompetitions());
-    }
-  }, [competitionsStatus, dispatch]);
-
-  useEffect(() => {
-    if (
-      (!!selectedCompetetionCode && standingsStatus === "idle") ||
-      (standingsStatus === "succeeded" &&
-        selectedCompetetionCode !== standings.competition.code)
-    ) {
-      dispatch(fetchStandings(selectedCompetetionCode));
-    }
-  }, [standingsStatus, dispatch, selectedCompetetionCode]);
-
-  // Handle login form submission
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
-    const credentials = {
-      email,
-      password,
-      team: selectedTeamId,
-      competition: selectedCompetetionCode,
-    };
-    // dispatch(loginUser(credentials));
+    setLoading(true);
+    setErrorMessage("");
+    
+    try {
+      const formData = new URLSearchParams();
+      formData.append('username', username);
+      formData.append('password', password);
 
-    console.log(credentials);
+      const response = await server.post('token/', formData, {
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+      });
+
+      localStorage.setItem('token', response.data.access_token);
+      navigate('/');
+    } catch (err) {
+      setErrorMessage(err.response?.data?.detail || "Login failed");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -88,15 +53,21 @@ const LoginForm = () => {
           Login
         </Typography>
 
+        {errorMessage && (
+          <Alert severity="error" sx={{ mb: 2 }}>
+            {errorMessage}
+          </Alert>
+        )}
+
         <form onSubmit={handleLogin}>
           <TextField
             variant="outlined"
             margin="normal"
             required
             fullWidth
-            label="Email Address"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            label="Username"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
             autoFocus
           />
 
@@ -111,57 +82,6 @@ const LoginForm = () => {
             onChange={(e) => setPassword(e.target.value)}
           />
 
-          {/* Competition selection */}
-          {!!competitions && (
-            <FormControl fullWidth margin="normal">
-              <InputLabel id="competition-label">Competition</InputLabel>
-              <Select
-                labelId="competition-label"
-                value={selectedCompetetionCode}
-                onChange={(e) => setSelectedCompetetionCode(e.target.value)}
-                label="Competition"
-                required
-              >
-                {competitions.map((competition) => (
-                  <MenuItem key={competition.code} value={competition.code}>
-                    {competition.name}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-          )}
-
-          {/* Team selection */}
-          {selectedCompetetionCode && !!teams && (
-            <FormControl fullWidth margin="normal">
-              <InputLabel id="team-label">Team</InputLabel>
-              <Select
-                labelId="team-label"
-                value={selectedTeamId}
-                onChange={(e) => setSelectedTeamId(e.target.value)}
-                label="Team"
-                required
-              >
-                {teams.map((team) => (
-                  <MenuItem key={team.id} value={team.id}>
-                    {team.name}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-          )}
-
-          {error && (
-            <Typography
-              color="error"
-              variant="body2"
-              align="center"
-              sx={{ marginTop: 2 }}
-            >
-              {error}
-            </Typography>
-          )}
-
           <Box sx={{ textAlign: "center", marginTop: 2 }}>
             <Button
               type="submit"
@@ -171,10 +91,10 @@ const LoginForm = () => {
               sx={{
                 padding: "10px 0",
                 marginBottom: 2,
-                backgroundColor: "#840000", // Custom color
-                color: "white", // Text color
+                backgroundColor: "#840000",
+                color: "white",
                 "&:hover": {
-                  backgroundColor: "#C70039", // Hover color
+                  backgroundColor: "#C70039",
                 },
               }}
             >
