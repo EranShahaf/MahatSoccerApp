@@ -1,19 +1,19 @@
-import React, { useState } from "react";
+import React from "react";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
-import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 export const Navbar = () => {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const navigate = useNavigate();
+  const isAuthenticated = !!localStorage.getItem('token');
 
-  // Toggle authentication status (for demo purposes)
-  const handleAuthToggle = () => {
-    setIsAuthenticated(!isAuthenticated);
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    navigate('/login');
   };
 
   return (
@@ -38,18 +38,23 @@ export const Navbar = () => {
             Homepage
           </Typography>
 
-          {/* Login/Signup Button */}
           <Box style={{ marginLeft: "auto" }}>
             {isAuthenticated ? (
-              <Button color="inherit" onClick={handleAuthToggle}>
+              <Button 
+                color="inherit" 
+                onClick={handleLogout}
+                sx={{ ml: 2 }}
+              >
                 Logout
               </Button>
             ) : (
-              <>
-                <Button color="inherit" component={Link} to="/login">
-                  Sign in
-                </Button>
-              </>
+              <Button 
+                color="inherit" 
+                component={Link} 
+                to="/login"
+              >
+                Sign in
+              </Button>
             )}
           </Box>
         </Toolbar>

@@ -30,6 +30,9 @@ const Newsletter = () => {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // Add state for form visibility
+  const [showForm, setShowForm] = useState(false);
+
   useEffect(() => {
     if (articlesStatus === "idle") {
       dispatch(fetchArticles());
@@ -159,8 +162,9 @@ const Newsletter = () => {
         content: base64Content // Send as base64 string
       });
 
-      // Clear form and refresh articles
+      // Clear form, close it, and refresh articles
       setNewArticle({ title: '', content: '' });
+      setShowForm(false);
       dispatch(fetchArticles());
     } catch (error) {
       console.error('Error creating article:', error?.response?.data || error.message);
@@ -169,12 +173,39 @@ const Newsletter = () => {
     }
   };
 
-  // Add the form component before the articles list
-  const createArticleForm = (
+  // Create button to toggle form visibility
+  const createButton = (
+    <Box display="flex" justifyContent="center" mb={4}>
+      <Button 
+        variant="contained"
+        onClick={() => setShowForm(!showForm)}
+        sx={{ 
+          bgcolor: "#840000",
+          '&:hover': {
+            bgcolor: "#6b0000"
+          }
+        }}
+      >
+        {showForm ? 'Cancel' : 'Create Article'}
+      </Button>
+    </Box>
+  );
+
+  // Modify the form component to include a close button
+  const createArticleForm = showForm ? (
     <Paper elevation={2} sx={{ p: 3, mb: 4 }}>
-      <Typography variant="h6" sx={{ mb: 2, color: "#840000" }}>
-        Create New Article
-      </Typography>
+      <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
+        <Typography variant="h6" sx={{ color: "#840000" }}>
+          Create New Article
+        </Typography>
+        <Button 
+          onClick={() => setShowForm(false)}
+          size="small"
+          sx={{ color: "#840000" }}
+        >
+          Close
+        </Button>
+      </Box>
       <form onSubmit={handleSubmit}>
         <TextField
           fullWidth
@@ -210,11 +241,11 @@ const Newsletter = () => {
             }
           }}
         >
-          {isSubmitting ? <CircularProgress size={24} /> : 'Create Article'}
+          {isSubmitting ? <CircularProgress size={24} /> : 'Submit Article'}
         </Button>
       </form>
     </Paper>
-  );
+  ) : null;
 
   return (
     <Container maxWidth="lg" sx={{ mt: 4 }}>
@@ -223,6 +254,7 @@ const Newsletter = () => {
           sx={{ color: "#840000", mb: 4 }}>
           Football News & Updates
         </Typography>
+        {createButton}
         {createArticleForm}
         {content}
       </Paper>

@@ -5,7 +5,24 @@ export const fetchArticles = createAsyncThunk(
   "articles/fetchArticles",
   async () => {
     const response = await server.get("/articles/");
-    return response.data;
+    const articles = response.data;
+
+    const articlesWithCreators = await Promise.all(
+      articles.map(async (article) => {
+        try {
+          const creatorResponse = await server.get(`/users/${article.creator_id}`);
+          return {
+            ...article,
+            creator: creatorResponse.data
+          };
+        } catch (error) {
+          console.error(`Error fetching creator for article ${article.id}:`, error);
+          return article;
+        }
+      })
+    );
+
+    return articlesWithCreators;
   }
 );
 
