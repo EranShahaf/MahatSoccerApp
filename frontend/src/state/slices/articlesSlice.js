@@ -4,7 +4,7 @@ import { server } from "../../api/api";
 export const fetchArticles = createAsyncThunk(
   "articles/fetchArticles",
   async () => {
-    const response = await server.get("articles/");
+    const response = await server.get("/articles/");
     return response.data;
   }
 );

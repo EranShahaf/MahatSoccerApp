@@ -6,7 +6,7 @@ from dal import MysqlConnector
 from sqlalchemy import select
 from modals import User, UserCreate, UserUpdate, UserResponse, TokenData
 import jwt
-
+import logging
 from security import (
     get_password_hash,
     verify_password,
@@ -14,6 +14,8 @@ from security import (
     SECRET_KEY,
     ALGORITHM
 )
+
+logger = logging.getLogger("uvicorn")
 
 class UsersBL:        
     def create_user(self, user_create: UserCreate) -> UserResponse:
@@ -74,6 +76,7 @@ class UsersBL:
         return UserResponse.model_validate(user)
     
     async def get_current_user(self, token: Annotated[str, Depends(oauth2_scheme)]) -> UserResponse:
+        logger.info(f"Getting current user with token: {token}")
         credentials_exception = HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Could not validate credentials",
@@ -83,6 +86,8 @@ class UsersBL:
             payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
             user_id: str = payload.get("sub")
             username: str = payload.get("username")
+            logger.info(f"User ID: {user_id}, Username: {username}")
+            
             if user_id is None:
                 raise credentials_exception
             token_data = TokenData(user_id=user_id, username=username)

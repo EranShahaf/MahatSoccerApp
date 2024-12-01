@@ -1,21 +1,46 @@
-# Build stage
-FROM node:16-alpine AS build
+# Use Node 16 Alpine as the base image
+FROM node:16-alpine
 
+# Set the working directory
 WORKDIR /app
 
+# Copy package files
 COPY package*.json ./
 
-RUN npm install --force
+# Install dependencies including react-scripts
+RUN npm install -g react-scripts && \
+    npm install --force
 
+# Copy the rest of the application code
 COPY . .
 
-RUN npm run build
+# Add node_modules/.bin to PATH
+ENV PATH /app/node_modules/.bin:$PATH
 
-# Production stage
-FROM nginx:alpine
+# Expose port 3000
+EXPOSE 3000
 
-COPY --from=build /app/build /usr/share/nginx/html
+# Start the React app in development mode
+CMD ["npm", "start"]
 
-EXPOSE 80
+# # Build stage
+# FROM node:16-alpine AS build
 
-CMD ["nginx", "-g", "daemon off;"]
+# WORKDIR /app
+
+# COPY package*.json ./
+
+# RUN npm install --force
+
+# COPY . .
+
+# RUN npm run build
+
+# # Production stage
+# FROM nginx:alpine
+
+# COPY --from=build /app/build /usr/share/nginx/html
+
+# EXPOSE 80
+
+# CMD ["nginx", "-g", "daemon off;"]
